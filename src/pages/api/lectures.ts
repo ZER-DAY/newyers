@@ -1,12 +1,12 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { Client } from "pg";
 
+// استخدام رابط الاتصال بقاعدة البيانات من Railway أو أي مزود آخر
 const client = new Client({
-  user: "postgres",
-  host: "localhost",
-  database: "StudySchedules",
-  password: "1234",
-  port: 5432,
+  connectionString: process.env.DATABASE_URL, // قراءة الرابط من البيئة
+  ssl: {
+    rejectUnauthorized: false, // تعطيل التحقق من الشهادات في بيئات الإنتاج إذا كان الرابط يتطلب ذلك
+  },
 });
 
 client.connect();
@@ -19,7 +19,7 @@ export default async function handler(
     const { group_name, selected_date } = req.body;
 
     let query = "SELECT * FROM Lectures";
-    let params = [];
+    let params: (string | number)[] = []; // Explicitly typing params
 
     // إذا تم اختيار "جميع المحاضرات"
     if (selected_date === "all") {

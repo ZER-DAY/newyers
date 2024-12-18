@@ -5,21 +5,22 @@ import { Lecture } from "@/types/types";
 const Home = () => {
   const [groupName, setGroupName] = useState<string>("");
   const [lectures, setLectures] = useState<Lecture[]>([]);
-  const [selectedDate, setSelectedDate] = useState<string>("");
+  const [selectedDate, setSelectedDate] = useState<string>("today");
   const [noLecturesMessage, setNoLecturesMessage] = useState<string>("");
 
-  // دالة لحساب تاريخ الغد أو بعد غد
   const getNextDate = (date: string) => {
     const today = new Date();
     let nextDate = new Date(today);
 
     if (date === "tomorrow") {
-      nextDate.setDate(today.getDate() + 1); // غدًا
+      nextDate.setDate(today.getDate() + 1);
     } else if (date === "dayAfter") {
-      nextDate.setDate(today.getDate() + 2); // بعد غد
+      nextDate.setDate(today.getDate() + 2);
+    } else if (date === "today") {
+      nextDate = today; // استخدام التاريخ الحالي
     }
 
-    return nextDate.toISOString().split("T")[0]; // إعادة التاريخ بتنسيق yyyy-mm-dd
+    return nextDate.toISOString().split("T")[0];
   };
 
   const fetchLectures = async () => {
@@ -28,26 +29,31 @@ const Home = () => {
         ? {}
         : { group_name: groupName, selected_date: getNextDate(selectedDate) };
 
-    const res = await fetch("/api/lectures", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    });
+    try {
+      const res = await fetch("/api/lectures", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
 
-    if (res.ok) {
-      const data: Lecture[] = await res.json();
-      setLectures(data);
+      if (res.ok) {
+        const data: Lecture[] = await res.json();
+        setLectures(data);
 
-      // تحقق إذا كانت هناك محاضرات في اليوم المحدد
-      if (data.length === 0) {
-        setNoLecturesMessage("لا توجد محاضرات في هذا اليوم.");
+        if (data.length === 0) {
+          setNoLecturesMessage("لا توجد محاضرات في هذا اليوم.");
+        } else {
+          setNoLecturesMessage("");
+        }
       } else {
-        setNoLecturesMessage(""); // إذا كانت هناك محاضرات، إخفاء الرسالة
+        console.error("Failed to fetch lectures:", res.status);
+        setNoLecturesMessage("فشل في جلب البيانات. حاول مرة أخرى.");
       }
-    } else {
-      console.error("Failed to fetch lectures:", res.status);
+    } catch (error) {
+      console.error("Error fetching lectures:", error);
+      setNoLecturesMessage("حدث خطأ أثناء جلب البيانات.");
     }
   };
 
@@ -93,7 +99,6 @@ const Home = () => {
               onChange={(e) => setSelectedDate(e.target.value)}
               className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
-              <option value="">Select Date</option>
               <option value="today">Today</option>
               <option value="tomorrow">Tomorrow</option>
               <option value="dayAfter">Day After Tomorrow</option>
@@ -109,7 +114,6 @@ const Home = () => {
           Search
         </button>
 
-        {/* إذا لم توجد محاضرات في التاريخ المحدد */}
         {noLecturesMessage && (
           <div className="text-center text-red-500 font-semibold mb-6">
             {noLecturesMessage}
