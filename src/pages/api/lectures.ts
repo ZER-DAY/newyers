@@ -1,11 +1,15 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { Client } from "pg";
 
-// استخدام رابط الاتصال بقاعدة البيانات من Railway أو أي مزود آخر
+// تعريف الاتصال بقاعدة البيانات مباشرة في الكود
 const client = new Client({
-  connectionString: process.env.DATABASE_URL, // قراءة الرابط من البيئة
+  user: "postgres", // اسم المستخدم
+  host: "junction.proxy.rlwy.net", // العنوان
+  database: "railway", // اسم قاعدة البيانات
+  password: "bCFvuPKdBWTaaROdxraxdAVzUOdlGgAS", // كلمة المرور
+  port: 48194, // البورت
   ssl: {
-    rejectUnauthorized: false, // تعطيل التحقق من الشهادات في بيئات الإنتاج إذا كان الرابط يتطلب ذلك
+    rejectUnauthorized: false, // تعطيل التحقق من الشهادات إذا كان مطلوباً في بيئة الإنتاج
   },
 });
 
