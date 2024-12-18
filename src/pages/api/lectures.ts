@@ -1,15 +1,23 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { Client } from "pg";
 
+// استبدل هذه القيم بقيمك الحقيقية
 const client = new Client({
-  user: "postgres",
-  host: "localhost",
-  database: "StudySchedules",
-  password: "1234",
-  port: 5432,
+  user: "postgres.gusdxofystpxngfvkgay", // اسم المستخدم الخاص بقاعدة البيانات
+  host: "aws-0-eu-central-1.pooler.supabase.com", // عنوان الخادم من Supabase
+  database: "postgres", // اسم قاعدة البيانات
+  password: "bahaa12345678ADSA", // كلمة المرور الخاصة بقاعدة البيانات
+  port: 5432, // المنفذ (عادة 5432)
 });
 
-client.connect();
+client
+  .connect()
+  .then(() => {
+    console.log("Successfully connected to the database"); // رسالة عند نجاح الاتصال
+  })
+  .catch((error) => {
+    console.error("Error connecting to the database:", error); // رسالة عند فشل الاتصال
+  });
 
 export default async function handler(
   req: NextApiRequest,
