@@ -1,16 +1,12 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { Client } from "pg";
 
-// تعريف الاتصال بقاعدة البيانات مباشرة في الكود
 const client = new Client({
-  user: "postgres", // اسم المستخدم
-  host: "junction.proxy.rlwy.net", // العنوان
-  database: "railway", // اسم قاعدة البيانات
-  password: "bCFvuPKdBWTaaROdxraxdAVzUOdlGgAS", // كلمة المرور
-  port: 48194, // البورت
-  ssl: {
-    rejectUnauthorized: false, // تعطيل التحقق من الشهادات إذا كان مطلوباً في بيئة الإنتاج
-  },
+  user: "postgres",
+  host: "localhost",
+  database: "StudySchedules",
+  password: "1234",
+  port: 5432,
 });
 
 client.connect();
