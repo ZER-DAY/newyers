@@ -17,7 +17,7 @@ const Home = () => {
     } else if (date === "dayAfter") {
       nextDate.setDate(today.getDate() + 2);
     } else if (date === "today") {
-      nextDate = today; // استخدام التاريخ الحالي
+      nextDate = today;
     }
 
     return nextDate.toISOString().split("T")[0];
@@ -43,23 +43,23 @@ const Home = () => {
         setLectures(data);
 
         if (data.length === 0) {
-          setNoLecturesMessage("لا توجد محاضرات في هذا اليوم.");
+          setNoLecturesMessage("No lectures found for the selected date.");
         } else {
           setNoLecturesMessage("");
         }
       } else {
         console.error("Failed to fetch lectures:", res.status);
-        setNoLecturesMessage("فشل في جلب البيانات. حاول مرة أخرى.");
+        setNoLecturesMessage("Failed to fetch data. Please try again.");
       }
     } catch (error) {
       console.error("Error fetching lectures:", error);
-      setNoLecturesMessage("حدث خطأ أثناء جلب البيانات.");
+      setNoLecturesMessage("An error occurred while fetching data.");
     }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center justify-center p-8 relative">
-      <div className="absolute top-0 left-0 w-full h-full bg-opacity-50 bg-black animate-pulse"></div>
+      <div className="absolute inset-0 bg-black opacity-50 animate-pulse"></div>
       <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-2xl relative z-10">
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
           Find Lectures
@@ -71,8 +71,9 @@ const Home = () => {
             width="480"
             height="274"
             frameBorder="0"
-            className="giphy-embed"
+            className="giphy-embed rounded-lg shadow-md"
             allowFullScreen
+            title="Lecture GIF"
           ></iframe>
         </div>
 
