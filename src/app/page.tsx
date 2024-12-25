@@ -10,7 +10,7 @@ const Home = () => {
 
   const getNextDate = (date: string) => {
     const today = new Date();
-    let nextDate = new Date(today);
+    const nextDate = new Date(today); // استخدام const بدلاً من let
 
     if (date === "tomorrow") {
       nextDate.setDate(today.getDate() + 1);
