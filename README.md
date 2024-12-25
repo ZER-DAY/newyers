@@ -1,5 +1,8 @@
 # Lecture API - University Schedule System
 
+![image](https://github.com/user-attachments/assets/8e943aa8-1a1b-4d0a-b20c-642e3b61d263)
+
+
 This project provides an API to retrieve lecture schedules from a PostgreSQL database. The API allows users to filter lectures based on the group name and the selected date. It provides essential details such as lecture ID, lecture name, date, room number, time slot, and the teacher's name.
 
 ## Features
@@ -81,6 +84,10 @@ This project provides an API to retrieve lecture schedules from a PostgreSQL dat
      -d '{"group_name": "Group A", "selected_date": "2024-12-25"}'
 
 
+
+
+
+
 ## API Endpoint
 
 ### POST `/api/lectures`
@@ -115,6 +122,5 @@ This project provides an API to retrieve lecture schedules from a PostgreSQL dat
 ]
 
 
-![image](https://github.com/user-attachments/assets/8e943aa8-1a1b-4d0a-b20c-642e3b61d263)
 
 
