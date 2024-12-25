@@ -7,28 +7,57 @@ const Home = () => {
   const [lectures, setLectures] = useState<Lecture[]>([]);
   const [selectedDate, setSelectedDate] = useState<string>("today");
   const [noLecturesMessage, setNoLecturesMessage] = useState<string>("");
+  const [customDate, setCustomDate] = useState<string>("");
+
+  // Group names suggestions
+  const groupNamesSuggestions = [
+    "ИВТ-360",
+    "ИВТ-363",
+    "ИВТ-364",
+    "ПРИН-366",
+    "ПРИН-367",
+    "ПРИН-368",
+    "Ф-369",
+    "ИИТ-373",
+  ];
 
   const getNextDate = (date: string) => {
     const today = new Date();
-    const nextDate = new Date(today); // استخدام const بدلاً من let
+    const nextDate = new Date(today);
 
     if (date === "tomorrow") {
       nextDate.setDate(today.getDate() + 1);
     } else if (date === "dayAfter") {
       nextDate.setDate(today.getDate() + 2);
+    } else if (date === "custom" && customDate) {
+      return customDate; // Use custom date input
     }
 
     return nextDate.toISOString().split("T")[0];
   };
 
   const fetchLectures = async () => {
-    if (!groupName.trim()) {
-      setNoLecturesMessage("Please enter the group name.");
-      return;
+    // Validation: If custom date is selected, ensure a group name is entered
+    if (selectedDate === "custom" && !groupName) {
+      setNoLecturesMessage(
+        "Please enter a group name before selecting a custom date."
+      );
+      return; // Return early if groupName is not provided for custom date
     }
 
-    setNoLecturesMessage("");
-    setLectures([]);
+    // Validation: Ensure a group name is entered for other date selections
+    if (!groupName && selectedDate !== "all" && selectedDate !== "custom") {
+      setNoLecturesMessage("Please enter a group name.");
+      return; // Return early if groupName is not provided
+    }
+
+    const body =
+      selectedDate === "all"
+        ? {}
+        : {
+            group_name: groupName,
+            selected_date: getNextDate(selectedDate),
+          };
 
     try {
       const res = await fetch("/api/lectures", {
@@ -36,10 +65,7 @@ const Home = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          group_name: groupName,
-          selected_date: getNextDate(selectedDate),
-        }),
+        body: JSON.stringify(body),
       });
 
       if (res.ok) {
@@ -48,8 +74,11 @@ const Home = () => {
 
         if (data.length === 0) {
           setNoLecturesMessage("No lectures found for the selected date.");
+        } else {
+          setNoLecturesMessage("");
         }
       } else {
+        console.error("Failed to fetch lectures:", res.status);
         setNoLecturesMessage("Failed to fetch data. Please try again.");
       }
     } catch (error) {
@@ -66,6 +95,18 @@ const Home = () => {
           Find Lectures
         </h1>
 
+        <div className="mb-6 flex justify-center">
+          <iframe
+            src="https://giphy.com/embed/qrhKvS6Kz8yfC"
+            width="480"
+            height="274"
+            frameBorder="0"
+            className="giphy-embed rounded-lg shadow-md"
+            allowFullScreen
+            title="Lecture GIF"
+          ></iframe>
+        </div>
+
         <div className="mb-6">
           <label className="block text-sm font-semibold text-gray-600">
             Group Name
@@ -76,23 +117,46 @@ const Home = () => {
             value={groupName}
             onChange={(e) => setGroupName(e.target.value)}
             className="w-full p-3 mt-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            list="groupNames" // Connect input with suggestions
           />
+          <datalist id="groupNames">
+            {groupNamesSuggestions.map((group) => (
+              <option key={group} value={group} />
+            ))}
+          </datalist>
         </div>
 
         <div className="mb-6">
           <label className="block text-sm font-semibold text-gray-600">
             Select Date
           </label>
-          <select
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          >
-            <option value="today">Today</option>
-            <option value="tomorrow">Tomorrow</option>
-            <option value="dayAfter">Day After Tomorrow</option>
-          </select>
+          <div className="mt-2">
+            <select
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              <option value="today">Today</option>
+              <option value="tomorrow">Tomorrow</option>
+              <option value="dayAfter">Day After Tomorrow</option>
+              <option value="custom">Custom Date</option>
+            </select>
+          </div>
         </div>
+
+        {selectedDate === "custom" && (
+          <div className="mb-6">
+            <label className="block text-sm font-semibold text-gray-600">
+              Custom Date
+            </label>
+            <input
+              type="date"
+              value={customDate}
+              onChange={(e) => setCustomDate(e.target.value)}
+              className="w-full p-3 mt-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+          </div>
+        )}
 
         <button
           onClick={fetchLectures}
@@ -123,6 +187,9 @@ const Home = () => {
                 Room: {lecture.room_number}
               </p>
               <p className="text-sm text-gray-600">Time: {lecture.time_slot}</p>
+              <p className="text-sm text-gray-600">
+                Teacher: {lecture.teacher_name} {/* Display teacher name */}
+              </p>
             </div>
           ))}
         </div>
