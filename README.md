@@ -85,31 +85,4 @@ This project provides an API to retrieve lecture schedules from a PostgreSQL dat
 
 ---
 
-### Steps to Follow:
-1. **Replace placeholders**: In the README file, make sure to replace the repository link (`https://github.com/your-username/lecture-api.git`) and database connection details with actual information.
-   
-2. **Create `.env` file**: Ensure your environment variables (like database credentials) are stored securely in a `.env` file (do not commit this file to GitHub). Here's an example `.env` file for local development:
 
-    ```txt
-    DATABASE_URL=postgres://postgres.gusdxofystpxngfvkgay:bahaa12345678ADSA@aws-0-eu-central-1.pooler.supabase.com:5432/postgres
-    ```
-
-3. **Deploy**: Once your project is ready and tested locally, you can deploy it to a platform like **Vercel** (ideal for Next.js) or **Heroku**.
-
-4. **Design Consideration**: You can further enhance the README by adding any design choices, flowcharts, or diagrams explaining how the API works or how the database schema is structured.
-
-5. **Database Schema**:
-   - **Lectures Table**: Contains lecture-related information.
-   - **Teachers Table**: Contains details about the teachers.
-   - **Groups Table**: Contains information about the groups.
-
----
-
-### Example of Usage:
-
-1. To test the API, you can use tools like **Postman** or **cURL** to send `POST` requests with different filters, e.g.:
-   
-   ```bash
-   curl -X POST http://localhost:3000/api/lectures \
-     -H "Content-Type: application/json" \
-     -d '{"group_name": "Group A", "selected_date": "2024-12-25"}'
