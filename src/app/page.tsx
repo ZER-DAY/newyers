@@ -16,18 +16,19 @@ const Home = () => {
       nextDate.setDate(today.getDate() + 1);
     } else if (date === "dayAfter") {
       nextDate.setDate(today.getDate() + 2);
-    } else if (date === "today") {
-      nextDate = today;
     }
 
     return nextDate.toISOString().split("T")[0];
   };
 
   const fetchLectures = async () => {
-    const body =
-      selectedDate === "all"
-        ? {}
-        : { group_name: groupName, selected_date: getNextDate(selectedDate) };
+    if (!groupName.trim()) {
+      setNoLecturesMessage("Please enter the group name.");
+      return;
+    }
+
+    setNoLecturesMessage("");
+    setLectures([]);
 
     try {
       const res = await fetch("/api/lectures", {
@@ -35,7 +36,10 @@ const Home = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(body),
+        body: JSON.stringify({
+          group_name: groupName,
+          selected_date: getNextDate(selectedDate),
+        }),
       });
 
       if (res.ok) {
@@ -44,11 +48,8 @@ const Home = () => {
 
         if (data.length === 0) {
           setNoLecturesMessage("No lectures found for the selected date.");
-        } else {
-          setNoLecturesMessage("");
         }
       } else {
-        console.error("Failed to fetch lectures:", res.status);
         setNoLecturesMessage("Failed to fetch data. Please try again.");
       }
     } catch (error) {
@@ -64,18 +65,6 @@ const Home = () => {
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
           Find Lectures
         </h1>
-
-        <div className="mb-6 flex justify-center">
-          <iframe
-            src="https://giphy.com/embed/qrhKvS6Kz8yfC"
-            width="480"
-            height="274"
-            frameBorder="0"
-            className="giphy-embed rounded-lg shadow-md"
-            allowFullScreen
-            title="Lecture GIF"
-          ></iframe>
-        </div>
 
         <div className="mb-6">
           <label className="block text-sm font-semibold text-gray-600">
@@ -94,18 +83,15 @@ const Home = () => {
           <label className="block text-sm font-semibold text-gray-600">
             Select Date
           </label>
-          <div className="mt-2">
-            <select
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            >
-              <option value="today">Today</option>
-              <option value="tomorrow">Tomorrow</option>
-              <option value="dayAfter">Day After Tomorrow</option>
-              <option value="all">All Lectures</option>
-            </select>
-          </div>
+          <select
+            value={selectedDate}
+            onChange={(e) => setSelectedDate(e.target.value)}
+            className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          >
+            <option value="today">Today</option>
+            <option value="tomorrow">Tomorrow</option>
+            <option value="dayAfter">Day After Tomorrow</option>
+          </select>
         </div>
 
         <button
