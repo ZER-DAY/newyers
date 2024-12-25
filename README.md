@@ -115,5 +115,6 @@ This project provides an API to retrieve lecture schedules from a PostgreSQL dat
 ]
 
 
+![image](https://github.com/user-attachments/assets/8e943aa8-1a1b-4d0a-b20c-642e3b61d263)
 
 
