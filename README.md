@@ -25,7 +25,7 @@ This project provides an API to retrieve lecture schedules from a PostgreSQL dat
 ### Steps to Run Locally:
 1. Clone the repository:
     ```bash
-    git clone https://github.com/your-username/lecture-api.git
+    git clone https://github.com/ZER-DAY/newyers.git
     cd lecture-api
     ```
 
